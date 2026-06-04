@@ -102,15 +102,26 @@ export async function leaderboardRoutes(app: FastifyInstance): Promise<void> {
     return reply.send({ weekId, poolTotal, rewards });
   });
 
-  if (env.NODE_ENV !== 'production' || env.ALLOW_DEMO_AUTH) {
-    app.post('/api/auth/demo-token', async (request, reply) => {
-      const { userId } = (request.body as { userId?: string }) ?? {};
-      if (!userId) {
-        return reply.status(400).send({ error: 'userId required' });
-      }
-      const token = app.jwt.sign({ sub: userId }, { expiresIn: '7d' });
-      return reply.send({ token });
-    });
+  if (!env.DISABLE_DEMO_AUTH) {
+    app.post(
+      '/api/auth/demo-token',
+      {
+        config: {
+          rateLimit:
+            env.NODE_ENV === 'production'
+              ? { max: 60, timeWindow: '1 minute' }
+              : { max: 1000, timeWindow: '1 minute' },
+        },
+      },
+      async (request, reply) => {
+        const { userId } = (request.body as { userId?: string }) ?? {};
+        if (!userId) {
+          return reply.status(400).send({ error: 'userId required' });
+        }
+        const token = app.jwt.sign({ sub: userId }, { expiresIn: '7d' });
+        return reply.send({ token });
+      },
+    );
   }
 
   app.post(

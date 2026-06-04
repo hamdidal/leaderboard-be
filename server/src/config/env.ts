@@ -17,8 +17,8 @@ const envSchema = z
     WEEKLY_CRON: z.string().default('0 0 * * 1'),
     CORS_ORIGINS: z.string().default('http://localhost:5173'),
     INTERNAL_API_KEY: z.string().min(32).default('dev-internal-api-key-min-32-chars!!!'),
-    /** Set to true on Railway so Netlify demo / "Your position" works (case demo only). */
-    ALLOW_DEMO_AUTH: z
+    /** Set to true to disable demo-token (case demo keeps it enabled by default). */
+    DISABLE_DEMO_AUTH: z
       .preprocess((val) => val === 'true' || val === '1' || val === true, z.boolean())
       .default(false),
   })
