@@ -15,8 +15,7 @@
     "seed": "npm run seed -w server",
     "load:k6": "k6 run load/k6/leaderboard-smoke.js",
     "load:k6:ingest": "k6 run load/k6/score-ingest.js",
-    "job:distribute": "npm run job:distribute -w server",
-    "prepare": "husky"
+    "job:distribute": "npm run job:distribute -w server"
   },
   "lint-staged": {
     "**/*.{ts,tsx}": [
