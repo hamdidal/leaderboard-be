@@ -71,6 +71,7 @@ jobs:
       - run: npm ci --legacy-peer-deps
       - run: npm run build -w packages/shared
       - run: npm run prisma:generate -w server
+      - run: npm run prisma:migrate:deploy -w server
       - run: npm run test -w server
 
   build:

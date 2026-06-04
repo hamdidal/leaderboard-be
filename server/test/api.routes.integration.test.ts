@@ -52,7 +52,7 @@ describe.skipIf(!infraUp)('API routes (Fastify inject)', () => {
   });
 
   afterAll(async () => {
-    await app.close();
+    await app?.close();
     await cleanupIntegrationFixture();
     await prisma.$disconnect();
   });
