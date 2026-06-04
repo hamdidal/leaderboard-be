@@ -5,6 +5,6 @@ buildCommand = "npm run build -w packages/shared && npm run prisma:generate -w s
 [deploy]
 startCommand = "npm run prisma:migrate:deploy -w server && npm run start -w server"
 healthcheckPath = "/healthz"
-healthcheckTimeout = 30
+healthcheckTimeout = 120
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 5
