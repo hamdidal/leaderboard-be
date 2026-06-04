@@ -102,7 +102,7 @@ export async function leaderboardRoutes(app: FastifyInstance): Promise<void> {
     return reply.send({ weekId, poolTotal, rewards });
   });
 
-  if (env.NODE_ENV !== 'production') {
+  if (env.NODE_ENV !== 'production' || env.ALLOW_DEMO_AUTH) {
     app.post('/api/auth/demo-token', async (request, reply) => {
       const { userId } = (request.body as { userId?: string }) ?? {};
       if (!userId) {
