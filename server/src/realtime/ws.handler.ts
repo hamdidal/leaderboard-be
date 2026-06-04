@@ -1,6 +1,8 @@
 import type { FastifyInstance } from 'fastify';
 import type WebSocket from 'ws';
 import websocket from '@fastify/websocket';
+import { isOriginAllowed } from '../config/cors';
+import { env } from '../config/env';
 import { redisSubscriber } from '../config/redis';
 import { RedisKeys } from '../lib/redis-keys';
 import { leaderboardRepo } from '../modules/leaderboard/leaderboard.repo';
@@ -46,7 +48,16 @@ async function unsubscribeChannel(channel: string): Promise<void> {
 }
 
 export async function registerWebSocket(app: FastifyInstance): Promise<void> {
-  await app.register(websocket);
+  await app.register(websocket, {
+    options:
+      env.NODE_ENV === 'production'
+        ? {
+            verifyClient: (info: { origin?: string }, next: (allowed: boolean) => void) => {
+              next(isOriginAllowed(info.origin));
+            },
+          }
+        : undefined,
+  });
 
   redisSubscriber.on('message', (channel, message) => {
     const clients = channelClients.get(channel);

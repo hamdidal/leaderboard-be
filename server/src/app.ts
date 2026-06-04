@@ -4,6 +4,7 @@ import rateLimit from '@fastify/rate-limit';
 import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 import { ZodError } from 'zod';
+import { getAllowedCorsOrigins, isOriginAllowed } from './config/cors';
 import { env } from './config/env';
 import { AppError } from './lib/errors';
 import { registerAuth } from './modules/auth/auth.plugin';
@@ -17,10 +18,20 @@ export async function buildApp() {
   await app.register(cors, {
     origin:
       env.NODE_ENV === 'production'
-        ? env.CORS_ORIGINS.split(',')
-            .map((o) => o.trim())
-            .filter(Boolean)
+        ? (origin, callback) => {
+            if (isOriginAllowed(origin)) {
+              callback(null, origin ?? true);
+              return;
+            }
+            app.log.warn(
+              { origin, allowed: getAllowedCorsOrigins() },
+              'CORS request blocked — check CORS_ORIGINS on Railway',
+            );
+            callback(null, false);
+          }
         : true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   });
   await app.register(rateLimit, {
     max: 1000,
