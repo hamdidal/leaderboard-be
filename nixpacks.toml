@@ -1,0 +1,3 @@
+# Railway sets NODE_ENV=production; without dev deps, tsc/prisma are missing at build/start.
+[phases.install]
+cmds = ["npm ci --include=dev"]
