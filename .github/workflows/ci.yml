@@ -1,0 +1,89 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci --legacy-peer-deps
+      - run: npm run build -w packages/shared
+      - run: npm run lint -w server
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: panteon
+          POSTGRES_PASSWORD: panteon
+          POSTGRES_DB: panteon_leaderboard
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U panteon"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+      mongo:
+        image: mongo:7
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://panteon:panteon@localhost:5432/panteon_leaderboard
+      MONGODB_URI: mongodb://localhost:27017/panteon_leaderboard
+      REDIS_URL: redis://localhost:6379
+      JWT_SECRET: ci-test-secret-with-32-chars-minimum
+      INTERNAL_API_KEY: ci-internal-api-key-min-32-chars!!!
+      NODE_ENV: test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci --legacy-peer-deps
+      - run: npm run build -w packages/shared
+      - run: npm run prisma:generate -w server
+      - run: npm run test -w server
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci --legacy-peer-deps
+      - run: npm run build -w packages/shared
+      - run: npm run prisma:generate -w server
+      - run: npm run build -w server

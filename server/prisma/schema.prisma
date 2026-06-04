@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum WeekStatus {
+  ACTIVE
+  DISTRIBUTING
+  CLOSED
+}
+
+model User {
+  id          String   @id @default(uuid())
+  displayName String
+  avatarUrl   String?
+  createdAt   DateTime @default(now())
+  rewards     Reward[]
+}
+
+model Week {
+  id        String     @id
+  startsAt  DateTime
+  endsAt    DateTime
+  status    WeekStatus @default(ACTIVE)
+  poolTotal Decimal    @default(0) @db.Decimal(18, 2)
+  rewards   Reward[]
+}
+
+model Reward {
+  id        String   @id @default(uuid())
+  weekId    String
+  week      Week     @relation(fields: [weekId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  rank      Int
+  amount    Decimal  @db.Decimal(18, 2)
+  createdAt DateTime @default(now())
+
+  @@unique([weekId, userId])
+  @@index([weekId, rank])
+}

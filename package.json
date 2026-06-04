@@ -1,0 +1,37 @@
+{
+  "name": "leaderboard-be",
+  "private": true,
+  "workspaces": [
+    "server",
+    "packages/shared"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w server",
+    "build": "npm run build -w packages/shared && npm run build -w server",
+    "test": "npm run test -w server",
+    "lint": "npm run lint -w server",
+    "format": "prettier --write \"**/*.{ts,js,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,js,json,md}\"",
+    "seed": "npm run seed -w server",
+    "load:k6": "k6 run load/k6/leaderboard-smoke.js",
+    "load:k6:ingest": "k6 run load/k6/score-ingest.js",
+    "job:distribute": "npm run job:distribute -w server",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "**/*.{ts,tsx}": [
+      "prettier --write"
+    ],
+    "**/*.{js,json,md}": [
+      "prettier --write"
+    ]
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.7",
+    "prettier": "^3.8.3"
+  }
+}
