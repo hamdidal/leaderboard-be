@@ -104,6 +104,7 @@ npm run lint
 npm run test          # 26 tests
 npm run build
 npm run seed
+npm run seed:closed-week   # Postgres only — previous CLOSED week for last-week UI (safe mid-week)
 npm run job:distribute
 npm run load:k6
 npm run load:k6:ingest
@@ -117,7 +118,32 @@ See [.env.example](.env.example). Production requires `JWT_SECRET`, `INTERNAL_AP
 
 Hosted on **Railway** (`railway.toml`, `nixpacks.toml`). Data: Neon (Postgres), Upstash (Redis), MongoDB Atlas.
 
-After deploy, run `npm run seed` once against production databases (or Railway one-off) so the live frontend has sample data.
+After deploy, run `npm run seed` once against production databases so the live frontend has sample data.
+
+### Last week UI in production
+
+The frontend reads `GET /api/rewards/latest` — it needs a **CLOSED** week with 100 rewards in Postgres. `npm run seed` alone does **not** create this.
+
+Safe one-off (does not close the current week):
+
+```bash
+# Railway CLI (from repo root, linked to production service)
+railway run npm run seed:closed-week
+
+# Or locally with production env from Railway dashboard
+DATABASE_URL="postgresql://..." REDIS_URL="redis://..." npm run seed:closed-week
+```
+
+Verify:
+
+```bash
+curl -s https://panteon-leaderboard-server-production.up.railway.app/api/rewards/latest | head -c 200
+```
+
+Expect non-empty `rewards` and a `weekId` different from `/api/week/current`.
+
+Then hard-refresh the app. To see the recap modal again:  
+`localStorage.removeItem('panteon-recap-dismissed-week'); location.reload();`
 
 ## AI workflow
 
