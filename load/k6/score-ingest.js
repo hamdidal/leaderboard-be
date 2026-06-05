@@ -31,7 +31,7 @@ export function setup() {
 export default function () {
   seq += 1;
   const userId = `k6-load-user-${__VU}-${seq % 500}`;
-  const idempotencyKey = `k6-${__VU}-${__ITER}`;
+  const idempotencyKey = `k6-ingest-${__VU}-${String(__ITER).padStart(8, '0')}`;
 
   const res = http.post(
     `${BASE_URL}/api/internal/scores`,

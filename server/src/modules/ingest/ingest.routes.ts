@@ -12,6 +12,9 @@ export async function ingestRoutes(app: FastifyInstance): Promise<void> {
     '/api/internal/scores',
     {
       preHandler: preInternal,
+      config: {
+        rateLimit: { max: 5000, timeWindow: '1 minute' },
+      },
       schema: {
         tags: ['Internal'],
         summary: 'Record player earnings (game server only)',
@@ -30,6 +33,9 @@ export async function ingestRoutes(app: FastifyInstance): Promise<void> {
     '/api/internal/scores/batch',
     {
       preHandler: preInternal,
+      config: {
+        rateLimit: { max: 500, timeWindow: '1 minute' },
+      },
       schema: {
         tags: ['Internal'],
         summary: 'Batch score ingest (up to 100 events)',

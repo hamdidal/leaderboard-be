@@ -1,5 +1,7 @@
 # Load testing
 
+**Case reviewers:** start with the full guide in [docs/SCALE-TESTING.md](../docs/SCALE-TESTING.md) and run `npm run test:scale` from the monorepo root (Redis benchmark + k6 reads + k6 ingest).
+
 Read-heavy smoke test for the case scenario (“leaderboard must load fast”, top 100 + personal rank).
 
 ## Prerequisites
@@ -23,10 +25,17 @@ curl -s http://127.0.0.1:3001/healthz
 # already running — skip that step and go straight to seed + load:k6.
 
 npm run seed
-npm run load:k6
+npm run test:scale
 ```
 
 ```bash
+# Full case scale test (recommended for reviewers)
+npm run test:scale
+
+# Or individual steps
+npm run benchmark:redis
+npm run load:case
+
 # Default: http://127.0.0.1:3001, demo-user JWT (API already running)
 npm run load:k6
 

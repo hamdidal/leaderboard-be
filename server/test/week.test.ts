@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { getIsoWeekId, getNextIsoWeekId, getWeekBounds } from '../src/lib/week';
+import {
+  getIsoWeekId,
+  getNextIsoWeekId,
+  getPreviousIsoWeekId,
+  getWeekBounds,
+} from '../src/lib/week';
 
 describe('week utilities', () => {
   it('getNextIsoWeekId returns a different week after current week ends', () => {
@@ -15,5 +20,11 @@ describe('week utilities', () => {
   it('getIsoWeekId produces W-prefixed format', () => {
     const id = getIsoWeekId(new Date('2026-06-04'));
     expect(id).toMatch(/^\d{4}W\d{2}$/);
+  });
+
+  it('getPreviousIsoWeekId returns the week before getNextIsoWeekId', () => {
+    const current = '2026W23';
+    expect(getPreviousIsoWeekId(getNextIsoWeekId(current))).toBe(current);
+    expect(getPreviousIsoWeekId(current)).not.toBe(current);
   });
 });

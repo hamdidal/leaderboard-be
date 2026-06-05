@@ -45,7 +45,6 @@ client/storybook-static/
 client/
 e2e/
 playwright.config.ts
-docker-compose.yml
 
 # Misc
 *.local

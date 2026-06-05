@@ -77,7 +77,9 @@ async function seedClosedWeek(): Promise<void> {
     });
   });
 
-  console.log(`Seeded closed week ${closedWeekId} (${entries.length} rewards, pool ${POOL_TOTAL}).`);
+  console.log(
+    `Seeded closed week ${closedWeekId} (${entries.length} rewards, pool ${POOL_TOTAL}).`,
+  );
   console.log(`Current active week unchanged: ${currentWeekId}`);
   console.log('Refresh the app — Week Rewards panel should appear at the bottom.');
 

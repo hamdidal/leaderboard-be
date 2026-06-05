@@ -45,7 +45,7 @@ Mobile retries and duplicate queue deliveries are normal. Each ingest may includ
 | Redis limits         | Shard by `weekId` (already isolated keys); scale reads with replicas   |
 | Postgres             | Week metadata + rewards only; hot path avoids PG on ingest             |
 
-**Proof in this repo:** `npm run load:k6` (reads) and `npm run load:k6:ingest` (writes). These are **smoke benchmarks**, not a full 2M-player simulation. They show the chosen structures stay fast under concurrent load; a staged environment with `SEED_USER_COUNT=50000+` is the next step for heavier read tests.
+**Proof in this repo:** `npm run test:scale` (Redis benchmark + k6 reads + k6 ingest). See [SCALE-TESTING.md](./SCALE-TESTING.md) for the full case-reviewer guide. These are **smoke benchmarks**, not a full 2M-player simulation — they show the chosen structures stay fast under concurrent load; optional heavier seeds use `SEED_USER_COUNT=200000` or `2000000`.
 
 ## API reference
 

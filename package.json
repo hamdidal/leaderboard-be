@@ -2,6 +2,7 @@
   "name": "leaderboard-be",
   "private": true,
   "workspaces": [
+    "client",
     "server",
     "packages/shared"
   ],
@@ -14,6 +15,9 @@
     "format:check": "prettier --check \"**/*.{ts,js,json,md}\"",
     "seed": "npm run seed -w server",
     "seed:closed-week": "npm run seed:closed-week -w server",
+    "test:scale": "bash load/run-case-scale.sh",
+    "benchmark:redis": "npm run benchmark:redis -w server",
+    "load:case": "bash load/run-k6-case.sh",
     "load:k6": "k6 run load/k6/leaderboard-smoke.js",
     "load:k6:ingest": "k6 run load/k6/score-ingest.js",
     "job:distribute": "npm run job:distribute -w server"
