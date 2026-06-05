@@ -14,8 +14,8 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:migrate:deploy": "prisma migrate deploy",
     "prisma:push": "prisma db push",
-    "seed": "tsx src/scripts/seed.ts",
-    "seed:closed-week": "tsx src/scripts/seed-closed-week.ts",
+    "seed": "npx tsx src/scripts/seed.ts",
+    "seed:closed-week": "npx tsx src/scripts/seed-closed-week.ts",
     "job:distribute": "tsx src/scripts/trigger-distribution.ts"
   },
   "dependencies": {

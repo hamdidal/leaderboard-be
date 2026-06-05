@@ -33,3 +33,8 @@ export function getNextIsoWeekId(currentWeekId: string): string {
   const { endsAt } = getWeekBounds(currentWeekId);
   return getIsoWeekId(new Date(endsAt.getTime() + 86_400_000));
 }
+
+export function getPreviousIsoWeekId(currentWeekId: string): string {
+  const { startsAt } = getWeekBounds(currentWeekId);
+  return getIsoWeekId(new Date(startsAt.getTime() - 86_400_000));
+}
